@@ -51,13 +51,13 @@ carotid_project/
 ## 2. Dataset Information & Analysis
 
 ### Primary Dataset (Used for Training & Evaluation)
-- **Source:** Kaggle Common Carotid Artery Ultrasound Dataset (`archive/`)
+- **Source:** Kaggle "Common Carotid Artery Ultrasound Images"
 - **Modality:** B-mode Transverse Ultrasound (Cross-Section View)
 - **Anatomy:** Common Carotid Artery (CCA) and adjacent internal jugular vein
 - **Annotated Structure:** **Artery Lumen** (the blood-filled echo-free interior lumen represented as a solid binary blob)
 - **Image Count:** 1,100 image-mask pairs
 - **Raw Dimensions:** 749 × 709 pixels
-- **License:** `[License placeholder: Subject to original Kaggle dataset terms / CC BY 4.0 or Open Database License - verify on Kaggle competition page]`
+- **License & Data Note:** Dataset source = Kaggle "Common Carotid Artery Ultrasound Images", license = TO BE CONFIRMED by the repo owner (verify against original Kaggle competition / author terms).
 
 ### Why CUBS (`archive (2)`) Was Excluded From Training
 - **Dataset C (CUBS)** contains 2,176 images and masks in a **longitudinal view** (lateral orientation).
@@ -229,8 +229,8 @@ python src/visualize.py
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/PRANEETH1526/carotid_project.git
-cd carotid_project
+git clone https://github.com/PRANEETH1526/carotid-artery-tracking-robot.git
+cd carotid-artery-tracking-robot
 
 # 2. Create and activate a Python virtual environment
 python -m venv .venv
