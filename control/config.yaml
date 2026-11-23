@@ -1,0 +1,39 @@
+# Autonomous Carotid Artery Tracking Robot: Control Simulation Configuration
+# NOTE: All mechanical and kinematic parameters below are SIMULATION ASSUMPTIONS,
+# as this is a software-only project without physical robotic hardware.
+
+simulation:
+  dt: 0.05                     # Sample interval in seconds (0.05s = 20 Hz / 20 FPS)
+  target_center_px: [128, 128] # Desired carotid artery center in frame (xd, yd)
+  px_per_mm: 1.0               # Assumed spatial scaling (1 px = 1 unit)
+
+actuator:
+  link_length_mm: 150.0        # Assumed robotic arm lever link length
+  max_velocity_mm_s: 80.0      # Maximum probe motor translation speed
+  max_acceleration_mm_s2: 300.0# Maximum motor acceleration
+  range_limit_mm: 60.0         # Maximum stroke limit +/- from center
+  actuator_delay_frames: 1     # 1 frame delay (50 ms latency) for motor actuation
+  measurement_noise_std_px: 0.5# Measurement noise added to simulated feedback
+
+pid_controller:
+  # Tuned controller gains (via ITAE minimization on step scenario)
+  kp: 0.65
+  ki: 0.12
+  kd: 0.08
+  derivative_filter_coeff: 0.2 # Low-pass filter smoothing coefficient for derivative
+  anti_windup_limit: 25.0      # Maximum accumulated integral term
+  output_saturation: 50.0      # Maximum velocity command clamp (mm/s or px/s)
+
+disturbances:
+  step:
+    amplitude_px: 25.0
+    start_frame: 10
+  sinusoidal:
+    amplitude_px: 18.0
+    frequency_hz: 0.25         # 15 breaths/minute physiological breathing cycle
+  drift:
+    drift_rate_px_per_sec: 2.0 # Slow continuous probe slippage
+    random_std_px: 0.8
+  lost:
+    lost_start_frame: 25
+    lost_duration_frames: 10   # Detection drops for 10 frames (0.5 seconds)

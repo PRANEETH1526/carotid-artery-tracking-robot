@@ -1,0 +1,97 @@
+{
+  "project": "Autonomous Carotid Artery Tracking Robot",
+  "evaluation_type": "Software-Only Simulation & Test Set Evaluation",
+  "hardware": {
+    "device": "CPU",
+    "processor": "12th Gen Intel(R) Core(TM) i5-12450H (8 cores / 12 logical processors)",
+    "ram_gb": 16.0,
+    "python_version": "3.12.10",
+    "torch_version": "2.15.0+cpu"
+  },
+  "module_1_detection": {
+    "owner": "Srujan",
+    "model": "Compact U-Net (3 downsampling levels, 16 base channels)",
+    "parameter_count": 487713,
+    "model_size_mb": 5.92,
+    "training_epochs": 18,
+    "best_val_epoch": 18,
+    "best_val_dice": 0.9455,
+    "best_val_iou": 0.8971,
+    "test_set_size_frames": 157,
+    "test_set_sessions_count": 5,
+    "test_metrics": {
+      "dice_mean": 0.9486,
+      "dice_std": 0.0255,
+      "iou_mean": 0.9033,
+      "iou_std": 0.0426,
+      "precision": 0.9275,
+      "recall": 0.9734,
+      "inference_time_ms": 50.83,
+      "fps": 19.7
+    },
+    "classical_otsu_baseline": {
+      "dice_mean": 0.0484,
+      "dice_std": 0.0152,
+      "iou_mean": 0.0249,
+      "iou_std": 0.0079,
+      "dice_gain_pct": 90.0
+    },
+    "per_session_breakdown": {
+      "202201121819140033VAS": { "frames": 54, "share_pct": 34.4, "dice": 0.9411, "iou": 0.8903, "precision": 0.9290, "recall": 0.9573 },
+      "202201121847410041VAS": { "frames": 53, "share_pct": 33.8, "dice": 0.9523, "iou": 0.9095, "precision": 0.9185, "recall": 0.9898 },
+      "202201121815070032VAS": { "frames": 46, "share_pct": 29.3, "dice": 0.9557, "iou": 0.9155, "precision": 0.9355, "recall": 0.9782 },
+      "202201121807410028VAS": { "frames": 2,  "share_pct": 1.3,  "dice": 0.9295, "iou": 0.8687, "precision": 0.8761, "recall": 0.9911 },
+      "202202071358440055VAS": { "frames": 2,  "share_pct": 1.3,  "dice": 0.9112, "iou": 0.8397, "precision": 0.9884, "recall": 0.8493 }
+    }
+  },
+  "module_2_tracking": {
+    "owner": "Shabrish",
+    "tracker": "Discrete Kalman Filter (Constant Velocity Kinematics, 4 states)",
+    "centroid_mean_error_px": 20.68,
+    "centroid_median_error_px": 10.57,
+    "centroid_95th_percentile_error_px": 82.49,
+    "jitter_raw_std_px": 15.74,
+    "jitter_kalman_std_px": 3.05,
+    "jitter_reduction_pct": 80.6,
+    "dropout_test": {
+      "drop_rate": 0.10,
+      "success_rate_pct": 100.0,
+      "max_coast_frames": 5
+    }
+  },
+  "module_3_control": {
+    "owner": "Maruthi",
+    "controller": "Discrete PID with Anti-Windup Clamping & Low-Pass Derivative Filter",
+    "sample_time_dt": 0.05,
+    "tuned_gains": {
+      "kp": 0.90,
+      "ki": 0.05,
+      "kd": 0.04
+    },
+    "step_response_closed_loop": {
+      "rise_time_s": 0.60,
+      "settling_time_s": 3.45,
+      "overshoot_pct": 94.1,
+      "steady_state_error_px": 1.71,
+      "itae": 71.46
+    },
+    "sinusoidal_breathing_closed_loop": {
+      "tracking_error_mean_px": 7.99,
+      "itae": 108.07
+    },
+    "drift_closed_loop": {
+      "tracking_error_mean_px": 2.97,
+      "itae": 52.80
+    },
+    "lost_target_dropout_closed_loop": {
+      "tracking_error_mean_px": 1.11,
+      "itae": 60.81
+    }
+  },
+  "integration": {
+    "pipeline": "run_pipeline.py",
+    "mean_latency_ms": 57.91,
+    "fps": 17.3,
+    "demo_gif": "carotid_project/results/pipeline_demo.gif"
+  }
+}
