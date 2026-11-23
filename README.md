@@ -265,5 +265,50 @@ python src/stream.py --demo
 2. **Fixed Interface Contract:**
    - **Do NOT change the data format** ($256\times256$ grayscale float32 `[0.0, 1.0]`, masks strictly binary `{0, 255}`).
    - **Do NOT alter the session-wise split** or random seed (`seed=1`) without notifying all teammates, as downstream test metrics must remain comparable.
-3. **Model Weights:**
-   - Model weights (`*.pt`, `*.pth`, `*.h5`, `*.ckpt`) are ignored by `.gitignore`. Share checkpoint files via shared cloud storage or GitHub Release assets.
+### Model Weights Note
+- General model weights are excluded by default, but the lightweight trained checkpoint `detection/models/unet_best.pt` (5.9 MB) is committed directly to allow immediate out-of-the-box execution of the closed-loop tracking pipeline without retraining.
+
+---
+
+## 9. Subsystem Execution & Closed-Loop Demo
+
+All four subsystems have been fully implemented, validated, and integrated into a unified software-in-the-loop autonomous carotid artery tracking robot pipeline.
+
+### Quick Start: Running the Full Closed-Loop Pipeline
+
+```bash
+# Run headless closed-loop pipeline over test session (generates HUD frames and summary metrics)
+python run_pipeline.py --headless
+
+# Run interactive visual servoing demo with live HUD overlay
+python run_pipeline.py --demo --session 2026-02-09-17-08-30
+
+# Run complete pytest verification suite (all 4 subsystems + interface contract)
+pytest tests/test_all.py -v
+```
+
+### Module Verification Commands
+
+| Module | Responsible | Execution Command | Key Outputs |
+|---|---|---|---|
+| **Detection** | Srujan | `python detection/evaluate.py` | `reports/detection_training_curves.png`<br>`reports/detection_test_samples.png`<br>`reports/detection_failure_analysis.md` |
+| **Tracking** | Shabrish | `python tracking/evaluate_tracking.py` | `reports/tracking_trajectories.png` |
+| **Control** | Maruthi | `python control/evaluate_control.py` | `reports/control_response.png` |
+| **Integration** | Praneeth | `python run_pipeline.py --headless` | `results/pipeline_demo.gif`<br>`results/results.json`<br>`results/RESULTS.md` |
+
+### Key Benchmark Summary
+
+| Subsystem | Metric | Measured Value | Target / Requirement |
+|---|---|---|---|
+| **Detection (U-Net)** | Test Dice Score | **0.9486 ± 0.0255** | $\ge 0.85$ (Otsu baseline: 0.0484) |
+| | Test IoU | **0.9033 ± 0.0426** | $\ge 0.75$ |
+| | Inference Latency | **50.83 ms** (~19.7 FPS) | $< 100\text{ ms}$ (CPU) |
+| **Tracking (Kalman)** | Mean Centroid Error | **20.68 px** | Sub-centimeter tracking |
+| | Jitter Reduction | **80.6%** ($15.74 \to 3.05\text{ px}$) | Eliminates motor chatter |
+| | 10% Dropout Recovery | **100% Passed** | Coasting in `PREDICTED` state |
+| **Control (PID)** | Step Settling Time | **3.45 s** | $< 5.0\text{ s}$ |
+| | Steady-State Error | **1.71 px** | $< 5.0\text{ px}$ |
+| | Servoing Stability | Stable across Step, Sine, Drift | No divergence |
+| **Closed-Loop** | End-to-End Latency | **57.91 ms** (~17.3 FPS) | Real-time ($\ge 15\text{ FPS}$) |
+| | Unit Tests | **6 / 6 Passed** | 100% interface contract adherence |
+
